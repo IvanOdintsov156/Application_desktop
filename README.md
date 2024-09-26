@@ -1,44 +1,42 @@
-Конечно! Вот более полный пример документации для вашего приложения, включающий описание функций и примеры использования:
+App documentation
 
-```markdown
-# Документация приложения
+Project Description
 
-## Описание проекта
+This application is a graphical user interface designed for registering and authorizing users. It leverages the powerful `tkinter` and `customtkinter` libraries to create a user-friendly interface and facilitate smooth interactions.
 
-Данное приложение представляет собой графический интерфейс для регистрации и авторизации пользователей. Оно использует библиотеки `tkinter` и `customtkinter` для построения интерфейса и взаимодействия с пользователем.
+Requirements
 
-## Требования
+Python 3.x or later
 
-- Python 3.x
-- Библиотеки:
-  - `tkinter`
-  - `customtkinter`
-  - `sqlite3` (или другой используемый вами модуль для работы с базой данных)
+The following libraries:
+   – `tkinter`
+   – `customtkinter`
+   – \ 'sqlite3` (or any other database module of your choice)
 
-## Установка
+Installation
 
-1. Убедитесь, что у вас установлен Python 3.x.
-2. Установите необходимые библиотеки, используя pip:
+Make sure you have Python 3.x installed on your system.
+
+Install the required libraries using pip:
 
 ```bash
 pip install customtkinter
 ```
 
-## Запуск приложения
+Launching the app
 
-Для запуска приложения выполните следующую команду в вашем терминале:
+To start the application, run the following command in your terminal:
 
 ```bash
 python main.py
 ```
 
-## Структура проекта
+Project structure
 
-Примерная структура проекта:
+Here's a sample project structure:
 
 ```
 project_directory/
-│
 ├── main.py
 ├── auth_window.py
 ├── registration.py
@@ -47,57 +45,62 @@ project_directory/
 ├── static/
 │   └── icon.ico
 └── themes/
-    └── sky.json
+└── sky.json
 ```
 
-## Описание функций
+Description of functions
 
-### main.py
-Основной файл для запуска приложения.
+main.py
 
-### auth_window.py
-#### AuthWindow.login
-Функция для обработки входа пользователя.
+This is the main file responsible for launching the application.
+
+auth_window.py
+
+AuthWindow.login
+
+This function handles user login. It verifies the entered username and password against the database, then redirects the user to the appropriate screen based on the username.
 
 ```python
 def login(self):
-    username = self.entry_username.get()
-    password = self.entry_password.get()
+    username = self.entry_username.get()
+    password = self.entry_password.get()
 
-    if self.db.check_credentials(username, password):
-        self.master.withdraw()
-        if username == "2":
-            self.open_special_window(username)
-        else:
-            self.open_application_window(username)
-    else:
-        messagebox.showerror("Ошибка", "Неверное имя пользователя или пароль", parent=self.master)
-        self.entry_username.focus_set()  # Set focus back to username entry field
+    if self.db.check_credentials(username, password):
+        self.master.withdraw()
+        if username == "2":
+            self.open_special_window(username)
+        else:
+            self.open_application_window(username)
+    else:
+        messagebox.showerror("Ошибка", "Неверное имя пользователя или пароль", parent=self.master)
+        self.entry_username.focus_set()  # Set focus back to username entry field
 ```
 
-### registration.py
-#### RegistrationForm.upload_photo
-Функция для загрузки фотографии пользователя.
+registration.py
+
+RegistrationForm.upload_photo
+
+This function allows users to upload their photos. It prompts the user to select a file and then displays the photo on the screen.
 
 ```python
 def upload_photo(self):
-    self.file_path = filedialog.askopenfilename()
-    if self.file_path:
-        self.photo_path = self.file_path
-        self.display_photo(self.file_path)
-        self.show_cross_image()
+    self.file_path = filedialog.askopenfilename()
+    if self.file_path:
+        self.photo_path = self.file_path
+        self.display_photo(self.file_path)
+        self.show_cross_image()
 ```
 
-### database.py
-#### Database.insert_ticket
-Функция для вставки данных о тикете в базу данных.
+database.py
+
+Database.insert_ticket
+
+This function inserts ticket data into the database. It takes the ticket data as input and executes a SQL query to insert the necessary information into the database table.
 
 ```python
 def insert_ticket(self, ticket_data):
-    created_at = ticket_data.get('created_at', datetime.datetime.now().strftime('%Y-%м-%d %H:%M:%S'))
-    self.cursor.execute("INSERT INTO tickets (ticket_number, equipment, fault_type, problem_description, client, status, created_at, completion_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (ticket_data['ticket_number'], ticket_data['equipment'], ticket_data['fault_type'],
-                         ticket_data['problem_description'], ticket_data['client'], ticket_data['status'],
-                         created_at, ticket_data.get('completion_date', None)))
-    self.conn.commit()
+    created_at = ticket_data.get('created_at', datetime.datetime.now().strftime('%Y-%m-%d%H:%M:%S'))
+    self.cursor.execute("INSERT INTO tickets (ticket_number, equipment, fault_type, problem_description, client, status, created_at, completion_date) VALUES (?,?,?,?,?,?,?,?)",
+                (ticket_data['ticket_number'], ticket_data['equipment'], ticket_data['fault_type'], ticket_data['problem_description'], ticket_data['client'], ticket_data['status'], created_at, ticket_data.get('completion_date', None)))
+    self.conn.commit()
 ```
