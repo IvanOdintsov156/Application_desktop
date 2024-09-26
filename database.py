@@ -6,16 +6,25 @@ class Database:
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
         self.create_table()
-        self.insert_user("1", "1")
-        self.insert_user("2", "2")
+        self.cursor.execute("SELECT COUNT(*) FROM users WHERE username = '2' OR username = '1'")
+        if self.cursor.fetchone()[0] == 0:
+            self.cursor.execute("INSERT INTO users (username, date_of_birth, password, photo) VALUES (?, ?, ?, ?)",
+                               ('2', '1990-01-01', '2', None))
+            self.conn.commit()
+            self.cursor.execute("INSERT INTO users (username, date_of_birth, password, photo) VALUES (?, ?, ?, ?)",
+                               ('1', '1990-01-01', '1', None))
+            self.conn.commit()
 
     def create_table(self):
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                            id INTEGER PRIMARY KEY,
-                            username TEXT NOT NULL,
-                            password TEXT NOT NULL
-                            )''')
-
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                username TEXT NOT NULL UNIQUE,
+                date_of_birth DATE NOT NULL,
+                password TEXT NOT NULL,
+                photo BIN
+            )
+        ''')
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS tickets (
                             id INTEGER PRIMARY KEY,
                             ticket_number TEXT NOT NULL,
@@ -27,10 +36,32 @@ class Database:
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             completion_date TIMESTAMP
                             )''')
+        
+    def insert_user(self, name, dob, password, photo):
+        # Добавление нового пользователя в базу данных
+        query = '''INSERT INTO users (username, date_of_birth, password, photo) VALUES (?, ?, ?, ?)'''
+        self.cursor.execute(query, (name, dob, password, photo))
+        
+        # Сохраняем изменения и закрываем соединение
+        self.conn.commit()
+        self.conn.close()
+    def get_user_by_username(self, name):
+        self.cursor.execute("SELECT * FROM users WHERE username = ?", (name,))
+        return self.cursor.fetchone()
 
-    def insert_user(self, username, password):
-        self.cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-        return self.cursor.fetchone() is not None
+    def update_user(self, user_id, name, dob, password, photo):
+        # Обновление информации о пользователе
+        self.cursor.execute('''
+            UPDATE users SET username = ?, date_of_birth = ?, password = ?, photo = ?
+            WHERE id = ?
+        ''', (name, dob, password, photo, user_id))
+        self.conn.commit()
+
+    def delete_user(self, user_id):
+        # Удаление пользователя из базы данных
+        self.cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
+        self.conn.commit()
+
 
     def check_credentials(self, username, password):
         self.cursor.execute("SELECT * FROM users WHERE username = ? AND password=?", (username, password))
@@ -86,3 +117,5 @@ class Database:
 
     def __del__(self):
         self.conn.close()
+
+    

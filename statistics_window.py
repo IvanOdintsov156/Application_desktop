@@ -2,16 +2,16 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 from collections import Counter
-
+import customtkinter as ctk
 def create_statistics_window(db):
     statistics_window = tk.Toplevel()
     statistics_window.title("Статистика")
-
+    statistics_window.iconbitmap("static/icon.ico")
     # Стилизация
     style = ttk.Style()
     style.theme_use('clam')  # Выбираем одну из доступных тем
-    style.configure("TButton", foreground="white", background="#4CAF50", font=("Arial", 12))
-    style.configure("TLabel", background="#eee", font=("Arial", 12))
+    style.configure("TButton", foreground="white", background="#4CAF50", )# font=("Arial", 12))
+    style.configure("TLabel", background="#eee", )# font=("Arial", 12))
 
     style.map("TButton",
         foreground=[('pressed', 'white'), ('active', 'white')],
@@ -19,24 +19,24 @@ def create_statistics_window(db):
         font=[('pressed', ("Arial", 12, 'bold')), ('active', ("Arial", 12, 'bold'))]
     )
 
-    label_datetime = ttk.Label(statistics_window, style="TLabel", text="")
+    label_datetime = ctk.CTkLabel(statistics_window, text="")
     label_datetime.pack()
 
     def update_datetime():
         current_datetime = datetime.now().strftime('%d/%m/%Y, %H:%M:%S')
-        label_datetime.config(text=current_datetime)
+        label_datetime.configure(text=current_datetime)
         statistics_window.after(1000, update_datetime)
     update_datetime()
 
     # Создание виджета прокрутки для таблицы заявок
-    tree_tickets_frame = ttk.Frame(statistics_window)
+    tree_tickets_frame = ctk.CTkFrame(statistics_window)
     tree_tickets_frame.pack(expand=True, fill="both")
 
-    tree_tickets_scrollbar = ttk.Scrollbar(tree_tickets_frame, orient="vertical")
+    tree_tickets_scrollbar = ctk.CTkScrollbar(tree_tickets_frame)
     tree_tickets_scrollbar.pack(side="right", fill="y")
 
-    tree_tickets = ttk.Treeview(tree_tickets_frame, style="TLabel", yscrollcommand=tree_tickets_scrollbar.set)
-    tree_tickets_scrollbar.config(command=tree_tickets.yview)
+    tree_tickets = ttk.Treeview(tree_tickets_frame, yscrollcommand=tree_tickets_scrollbar.set)
+    tree_tickets_scrollbar.configure(command=tree_tickets.yview)
 
     tree_tickets["columns"] = ("№", "Оборудование", "Тип неисправности", "Описание", "Клиент", "Статус", "Дата и время создания", "Выполнение", "Время выполнения")
 
@@ -46,14 +46,14 @@ def create_statistics_window(db):
     tree_tickets.pack(side="left", expand=True, fill="both")
 
     # Создание виджета прокрутки для таблицы типов неисправностей
-    tree_fault_types_frame = ttk.Frame(statistics_window)
+    tree_fault_types_frame = ctk.CTkFrame(statistics_window)
     tree_fault_types_frame.pack(expand=True, fill="both")
 
-    tree_fault_types_scrollbar = ttk.Scrollbar(tree_fault_types_frame, orient="vertical")
+    tree_fault_types_scrollbar = ctk.CTkScrollbar(tree_fault_types_frame)
     tree_fault_types_scrollbar.pack(side="right", fill="y")
 
-    tree_fault_types = ttk.Treeview(tree_fault_types_frame, style="TLabel", yscrollcommand=tree_fault_types_scrollbar.set)
-    tree_fault_types_scrollbar.config(command=tree_fault_types.yview)
+    tree_fault_types = ttk.Treeview(tree_fault_types_frame, yscrollcommand=tree_fault_types_scrollbar.set)
+    tree_fault_types_scrollbar.configure(command=tree_fault_types.yview)
 
     tree_fault_types["columns"] = ("Тип неисправности", "Количество выполненных заявок")
 
